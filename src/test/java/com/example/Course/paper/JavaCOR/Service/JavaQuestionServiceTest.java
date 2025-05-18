@@ -9,7 +9,8 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class JavaQuestionServiceTest {
+public class JavaQuestionServiceTest {
+
 
     private JavaQuestionService service;
 
@@ -25,6 +26,16 @@ class JavaQuestionServiceTest {
         List<Question> all = service.getAllQuestions();
         assertEquals(1, all.size());
         assertEquals(q, all.get(0));
+    }
+
+    @Test
+    void testPreventDuplicateQuestions() {
+        Question q1 = new Question("Что такое Java?", "Язык");
+        Question q2 = new Question("Что такое Java?", "Язык");
+        service.addQuestion(q1);
+        service.addQuestion(q2); // не должен добавиться второй
+        List<Question> all = service.getAllQuestions();
+        assertEquals(1, all.size());
     }
 
     @Test
@@ -58,7 +69,7 @@ class JavaQuestionServiceTest {
     void testGetRandomQuestions_RequestMoreThanAvailable() {
         service.addQuestion(new Question("Q1", "A1"));
         service.addQuestion(new Question("Q2", "A2"));
-        List<Question> random = service.getRandomQuestions(5); // должно вернуть максимум 2
+        List<Question> random = service.getRandomQuestions(5); // должен вернуть максимум 2
         assertTrue(random.size() <= 2);
     }
 }
