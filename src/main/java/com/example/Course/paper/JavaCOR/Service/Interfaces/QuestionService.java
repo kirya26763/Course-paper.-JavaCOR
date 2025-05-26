@@ -2,18 +2,12 @@ package com.example.Course.paper.JavaCOR.Service.Interfaces;
 
 import com.example.Course.paper.JavaCOR.Model.Question;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.Collection;
 
 public interface QuestionService {
-
-    void addQuestion(Question question);
-
-    boolean removeQuestion(String questionText);
-
-    Optional<Question> findQuestion(String questionText);
-
-    List<Question> getAllQuestions();
-
-    List<Question> getRandomQuestions(int amount);
+    Question add(String question, String answer);
+    Question add(Question question);
+    Question remove(Question question);
+    Collection<Question> getAll();
+    Question getRandomQuestion();
 }

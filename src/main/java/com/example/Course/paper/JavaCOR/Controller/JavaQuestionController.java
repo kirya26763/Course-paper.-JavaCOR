@@ -1,38 +1,41 @@
 package com.example.Course.paper.JavaCOR.Controller;
 
 import com.example.Course.paper.JavaCOR.Model.Question;
+import com.example.Course.paper.JavaCOR.Service.Interfaces.QuestionService;
 import com.example.Course.paper.JavaCOR.Service.JavaQuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Collection;
 
 @RestController
 @RequestMapping("/exam/java")
 public class JavaQuestionController {
 
-    private final JavaQuestionService javaQuestionService;
+    private final QuestionService questionService;
 
     @Autowired
-    public JavaQuestionController(JavaQuestionService javaQuestionService) {
-        this.javaQuestionService = javaQuestionService;
+    public JavaQuestionController(JavaQuestionService javaQuestionService, QuestionService questionService) {
+        this.questionService = questionService;
     }
 
     @PostMapping("/add")
-    public String addQuestion(@RequestParam String question, @RequestParam String answer) {
-        javaQuestionService.addQuestion(new Question(question, answer));
-        return "Вопрос успешно добавлен.";
+    public Question add(@RequestParam String question, @RequestParam String answer) {
+        return questionService.add(question, answer);
     }
 
     @DeleteMapping("/remove")
-    public String removeQuestion(@RequestParam String question, @RequestParam String answer) {
-        boolean removed = javaQuestionService.removeQuestion(question);
-        return removed ? "Вопрос успешно удалён." : "Вопрос не найден.";
+    public Question remove(@RequestParam String question, @RequestParam String answer) {
+        return questionService.remove(new Question(question, answer));
     }
 
     @GetMapping
-    public List<Question> getAllQuestions() {
+    public Collection<Question> getAll() {
+        return questionService.getAll();
+    }
 
-        return javaQuestionService.getAllQuestions();
+    @GetMapping("/random")
+    public Question getRandomQuestion() {
+        return questionService.getRandomQuestion();
     }
 }

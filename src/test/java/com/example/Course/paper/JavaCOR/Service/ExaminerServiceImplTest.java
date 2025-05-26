@@ -8,7 +8,9 @@ import org.mockito.Mockito;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -26,12 +28,12 @@ public class ExaminerServiceImplTest {
 
     @Test
     void testGetQuestions_ReturnsCorrectAmount() {
-        List<Question> questions = Arrays.asList(
+        Set<Question> questions = new HashSet<>(Arrays.asList(
                 new Question("Q1", "A1"),
                 new Question("Q2", "A2"),
                 new Question("Q3", "A3")
-        );
-        when(questionService.getAllQuestions()).thenReturn(questions);
+        ));
+        when(questionService.getAll()).thenReturn(questions);
 
         List<Question> result = examinerService.getQuestions(2);
         assertEquals(2, result.size());
@@ -39,22 +41,22 @@ public class ExaminerServiceImplTest {
 
     @Test
     void testGetQuestions_TooManyRequested() {
-        List<Question> questions = List.of(
+        Set<Question> questions = Set.of(
                 new Question("Q1", "A1")
         );
-        when(questionService.getAllQuestions()).thenReturn(questions);
+        when(questionService.getAll()).thenReturn(questions);
 
         assertThrows(ResponseStatusException.class, () -> examinerService.getQuestions(5));
     }
 
     @Test
     void testGetQuestions_AllUnique() {
-        List<Question> questions = Arrays.asList(
+        Set<Question> questions = new HashSet<>(Arrays.asList(
                 new Question("Q1", "A1"),
                 new Question("Q2", "A2"),
                 new Question("Q3", "A3")
-        );
-        when(questionService.getAllQuestions()).thenReturn(questions);
+        ));
+        when(questionService.getAll()).thenReturn(questions);
 
         List<Question> result = examinerService.getQuestions(3);
         assertEquals(3, result.size());

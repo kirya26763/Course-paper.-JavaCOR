@@ -4,8 +4,7 @@ import com.example.Course.paper.JavaCOR.Model.Question;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.Collection;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,54 +21,47 @@ public class JavaQuestionServiceTest {
     @Test
     void testAddAndGetAllQuestions() {
         Question q = new Question("Что такое JVM?", "Java Virtual Machine");
-        service.addQuestion(q);
-        List<Question> all = service.getAllQuestions();
+        service.add(q);
+        Collection<Question> all = service.getAll();
         assertEquals(1, all.size());
-        assertEquals(q, all.get(0));
+        assertTrue(all.contains(q));
     }
 
     @Test
     void testPreventDuplicateQuestions() {
         Question q1 = new Question("Что такое Java?", "Язык");
         Question q2 = new Question("Что такое Java?", "Язык");
-        service.addQuestion(q1);
-        service.addQuestion(q2); // не должен добавиться второй
-        List<Question> all = service.getAllQuestions();
+        service.add(q1);
+        service.add(q2);
+        Collection<Question> all = service.getAll();
         assertEquals(1, all.size());
     }
 
     @Test
     void testRemoveQuestion() {
-        Question q = new Question("Что такое OOP?", "Object Oriented Programming");
-        service.addQuestion(q);
-        assertTrue(service.removeQuestion("Что такое OOP?"));
-        assertFalse(service.removeQuestion("Не существует"));
+        Question q = new Question("Что такое ООП?", "объектно-ориентированное программирование");
+        service.add(q);
+        Question removed = service.remove(q);
+        assertEquals(q, removed);
+
+        Question notFound = service.remove(new Question("Не существует", "нет"));
+        assertNull(notFound);
     }
 
     @Test
-    void testFindQuestion() {
-        Question q = new Question("Что такое Java?", "Язык программирования");
-        service.addQuestion(q);
-        Optional<Question> found = service.findQuestion("Что такое Java?");
-        assertTrue(found.isPresent());
-        assertEquals(q, found.get());
+    void testGetRandomQuestions() {
+        Question q1 = new Question("Q1", "A1");
+        Question q2 = new Question("Q2", "A2");
+        service.add(q1);
+        service.add(q2);
+
+        Question random = service.getRandomQuestion();
+        assertNotNull(random);
+        assertTrue(service.getAll().contains(random));
     }
 
     @Test
-    void testGetRandomQuestions_Unique() {
-        service.addQuestion(new Question("Q1", "A1"));
-        service.addQuestion(new Question("Q2", "A2"));
-        service.addQuestion(new Question("Q3", "A3"));
-        List<Question> random = service.getRandomQuestions(2);
-        assertEquals(2, random.size());
-        assertNotEquals(random.get(0), random.get(1));
-    }
-
-    @Test
-    void testGetRandomQuestions_RequestMoreThanAvailable() {
-        service.addQuestion(new Question("Q1", "A1"));
-        service.addQuestion(new Question("Q2", "A2"));
-        List<Question> random = service.getRandomQuestions(5); // должен вернуть максимум 2
-        assertTrue(random.size() <= 2);
+    void testGetRandomQuestion_WhenEmpty() {
+        assertNull(service.getRandomQuestion());
     }
 }

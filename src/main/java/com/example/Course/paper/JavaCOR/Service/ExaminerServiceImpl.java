@@ -21,7 +21,7 @@ public class ExaminerServiceImpl implements ExaminerService {
 
     @Override
     public List<Question> getQuestions(int amount) {
-        List<Question> allQuestions = questionService.getAllQuestions();
+        List<Question> allQuestions = new ArrayList<>(questionService.getAll());
 
         if (amount > allQuestions.size()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,

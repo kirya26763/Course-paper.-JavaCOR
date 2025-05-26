@@ -10,42 +10,40 @@ import java.util.*;
 @Service
 public class JavaQuestionService implements QuestionService {
 
-    private final List<Question> questions = new ArrayList<>();
+    private final Set<Question> questions = new HashSet<>();
 
     @Override
-    public void addQuestion(Question question) {
-        questions.add(question);
+    public Question add(String question, String answer) {
+        Question newQuestion = new Question(question, answer);
+        return add(newQuestion);
     }
 
     @Override
-    public boolean removeQuestion(String questionText) {
-        return questions.removeIf(q -> q.getQuestion().equalsIgnoreCase(questionText));
-    }
-
-    @Override
-    public Optional<Question> findQuestion(String questionText) {
-        return questions.stream()
-                .filter(q -> q.getQuestion().equalsIgnoreCase(questionText))
-                .findFirst();
-    }
-
-    @Override
-    public List<Question> getAllQuestions() {
-        return new ArrayList<>(questions);
-    }
-
-    @Override
-    public List<Question> getRandomQuestions(int amount) {
-        Set<Integer> usedIndexes = new HashSet<>();
-        List<Question> result = new ArrayList<>();
-
-        while (result.size() < amount && usedIndexes.size() < questions.size()) {
-            int index = RandomUtil.getRandomQuestion(questions.size());
-            if (usedIndexes.add(index)) {
-                result.add(questions.get(index));
-            }
+    public Question add(Question question) {
+        if (questions.add(question)) {
+            return question;
         }
+        // Возвращаем null, если вопрос уже был (или можно выбросить исключение)
+        return null;
+    }
 
-        return result;
+    @Override
+    public Question remove(Question question) {
+        boolean removed = questions.remove(question);
+        return removed ? question : null;
+    }
+
+    @Override
+    public Collection<Question> getAll() {
+        return Collections.unmodifiableSet(questions); // защитим от изменений извне
+    }
+
+    @Override
+    public Question getRandomQuestion() {
+        if (questions.isEmpty()) {
+            return null; // или выбросить исключение
+        }
+        int index = RandomUtil.getRandomQuestion(questions.size());
+        return new ArrayList<>(questions).get(index);
     }
 }
